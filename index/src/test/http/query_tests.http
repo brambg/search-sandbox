@@ -1,0 +1,111 @@
+
+# https://lucene.apache.org/core/10_0_0/queryparser/org/apache/lucene/queryparser/flexible/standard/nodes/intervalfn/package-summary.html
+# https://lucene.apache.org/core/10_2_2/queryparser/org/apache/lucene/queryparser/flexible/standard/StandardQueryParser.html
+
+### query: batavia
+PUT http://localhost:8647/query HTTP/1.1
+Content-Type: "application/json"
+
+{
+    "pagesize": 3,
+    "query": "batavia",
+    "facets": [
+        {"dimension": "parents", "filters": []}
+    ]
+}
+
+### query: containedBy with phrase
+PUT http://localhost:8647/query HTTP/1.1
+Content-Type: "application/json"
+
+{
+    "pagesize": 3,
+    "query": "fn:containedBy(Anthonij fn:phrase(Axel Anthonij Rosenquest))",
+    "facets": [
+        {"dimension": "parents", "filters": []}
+    ]
+}
+
+### query: containedBy with annotation
+PUT http://localhost:8647/query HTTP/1.1
+Content-Type: "application/json"
+
+{
+    "pagesize": 3,
+    "query": "fn:containedBy(anthonij person00001)",
+    "facets": [
+        {"dimension": "parents", "filters": []}
+    ]
+}
+
+### query
+PUT http://localhost:8647/query HTTP/1.1
+Content-Type: "application/json"
+
+{
+    "pagesize": 3,
+    "query": "fn:fuzzyTerm(anthonij 2 1000)",
+    "facets": [
+        {"dimension": "parents", "filters": []}
+    ]
+}
+
+### query
+PUT http://localhost:8647/query HTTP/1.1
+Content-Type: "application/json"
+
+{
+    "pagesize": 3,
+    "query": "[Ant TO Anthonij]",
+    "facets": [
+        {"dimension": "parents", "filters": []}
+    ]
+}
+
+### query
+PUT http://localhost:8647/query HTTP/1.1
+Content-Type: "application/json"
+
+{
+    "pagesize": 3,
+    "query": "fn:maxgaps(10 fn:ordered(radja batavia))",
+    "facets": [
+        {"dimension": "parents", "filters": []}
+    ]
+}
+
+### query
+PUT http://localhost:8647/query HTTP/1.1
+Content-Type: "application/json"
+
+{
+    "pagesize": 3,
+    "query": "\"person00001 concept00001\"~115",
+    "facets": [
+        {"dimension": "parents", "filters": []}
+    ]
+}
+
+### query: balinees batavia
+PUT http://localhost:8647/query HTTP/1.1
+Content-Type: "application/json"
+
+{
+    "pagesize": 3,
+    "query": "\"balinees batavia\"~100",
+    "facets": [
+        {"dimension": "parents", "filters": []}
+    ]
+}
+
+### wildcard query
+PUT http://localhost:8647/query HTTP/1.1
+Content-Type: "application/json"
+
+{
+    "pagesize": 3,
+    "query": "fn:wildcard(paard*)",
+    "facets": [
+        {"dimension": "parents", "filters": []}
+    ]
+}
