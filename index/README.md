@@ -16,22 +16,33 @@ It currently does not support replication, as there is no need for it at this mo
 
 - **Indexer.java** contains lots of test indexing code that will be removed. The Indexer will merely process the documents sent to the REST API.
 
-- **Querier.java** contains most of the action. There are several utility classes for parsing the sent query (SearchQuery), remembring queries in memory for the continuation (SearchState). Most of the lines-of-code are the JSON response generation. There is a Lucene query constructed from the sent query and the Lucene Facet module is used. This is standard stuff. The "nodes" in the hierarchical facets are stored as documents and retrieved when the facets are rendered. We will describe this in more detail later on.
+- **Querier.java** contains most of the action. There are several utility classes for parsing the sent query (SearchQuery), remembering queries in memory for the continuation (SearchState). Most of the lines-of-code are the JSON response generation. There is a Lucene query constructed from the sent query and the Lucene Facet module is used. This is standard stuff. The "nodes" in the hierarchical facets are stored as documents and retrieved when the facets are rendered. We will describe this in more detail later on.
 
 - **HighlightsAsObjects.java** is an extension of the UnifiedHighlighter with only one task: exposing the protected method HighlightsAsObjects. This allows for custom highlighting. This is done in **HighlightsFormatter.java**, which merely returns some details of the highlighting that we want to use in the response. It's mainly the start and end offsets in the original text, plus the matching term that we are interested in.
 
 ## AnnotateFilter
 
-The https://github.com/structs-nl/AnnotateFilter class is a submodule that allows the addition of annotations to the index. These annotations can be searched for and can highlighted in our custom highlighter. This code is almost done an can then be included in the indexing process.
+The https://github.com/structs-nl/AnnotateFilter class is a submodule that allows the addition of annotations to the index. These annotations can be searched for and can highlighted in our custom highlighter. This code is almost done and can then be included in the indexing process.
 
 ## Interval query using the position length
 
-The annotations have a positionlength that is not stored in the index. Via another filter, the positionlenght can be stored in the payload in the index and then retrieved in the query process. We have done an experiment with a patched interval query module that uses this length-as-payload information and the results are highly encouraging. The Enlight project uses a custom query module that we have built locally. We will will expand on this later on.
+The annotations have a positionlength that is not stored in the index. Via another filter, the positionlength can be stored in the payload in the index and then retrieved in the query process. We have done an experiment with a patched interval query module that uses this length-as-payload information and the results are highly encouraging. The Enlight project uses a custom query module that we have built locally. We will expand on this later on.
 
 The patched code can be found in the following branch of Lucene 10.2.2: https://github.com/structs-nl/lucene/tree/PosLenQuery-10.2.2. Only the lucene-queries and lucene-queryparser jar's need to be built. Lucene queries contains the changes (lucene/queries/src/java/org/apache/lucene/queries/intervals/TermIntervalsSource.java). Queries uses this patched file in the interval queries.
 
 # Technical notes
 
-curl -X PUT "localhost:8080/ingest" -F "file=@index_test.json" 
-mvn clean compile exec:java -Dexec.mainClass="nl.structs.Enlight" -Dexec.args="-path ./data -port 8080"
+## build the server
+```bash
+mvn package
+```
+
+## start the server
+```bash
 java -jar ./target/Enlight-0.2.jar -path ./data -port 8080
+```
+
+## initialize the server
+```bash
+curl -X PUT "localhost:8080/ingest" -F "file=@index_test.json" 
+```
